@@ -5,21 +5,39 @@ function Game () {
 	// const placements = new Array(3).fill(new Array(3)) 
 	// ^ not working as expected
 	const placements = [["", "", ""], ["", "", ""], ["", "", ""]]
+
 	return {score, turn, placements}
 }
 
-function Player (game, board, gamepiece) {
+function Player (gamepiece, game, board) {
 	const Move = (x, y) => {
 		game.placements[x][y] = gamepiece
 		board.Update()
 	}
 
-	return {gamepiece, Move}
+	return {gamepiece, game, board, Move}
 }
 
-const logic = (function () {
-	
-	return {a: "b"}
+const Engine = (function () {
+	let gameArchive = []
+	let currentGame = gameArchive[gameArchive.length-1]
+	let turn = false
+	const Evaluate = () => {
+
+	}
+
+	const CreateGame = (playerSigil, oppSigil) => {
+		const game = new Game()
+		const board = new Board()
+		return {
+			game,
+			board,
+			player : new Player(playerSigil, game, board),
+			opponent: new Player(oppSigil, game, board),
+		}
+	}
+
+	return {gameArchive, currentGame, turn, Evaluate, CreateGame}
 })()
 
 function Board (game) {
@@ -33,10 +51,4 @@ function Board (game) {
 	return {Update}
 }
 
-let currentGame = new Game()
-let currentBoard = new Board(currentGame)
-let currentPlayer = new Player(currentGame, currentBoard, "x")
-let currentOpponent = new Player(currentGame, currentBoard, "o")
-currentBoard.Update()
-currentPlayer.Move(1, 2)
 
