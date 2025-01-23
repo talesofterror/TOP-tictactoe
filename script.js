@@ -28,10 +28,12 @@ const Engine = (function () {
 
 	const CreateGame = (playerSigil, oppSigil) => {
 		const game = new Game()
-		const board = new Board()
+		const board = new Board(game)
 		return {
 			game,
+			// game: new Game(),
 			board,
+			// board: new Board(this.game),
 			player : new Player(playerSigil, game, board),
 			opponent: new Player(oppSigil, game, board),
 		}
