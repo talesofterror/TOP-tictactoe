@@ -3,21 +3,32 @@ const Engine = (function () {
 	let gameArchive = []
 	let currentGame = gameArchive[gameArchive.length-1]
 	let turn = false
-	const Evaluate = () => {
 
+	const Evaluate = (target) => {
+		for (row of target.game.placements) {
+			for (cell of row) {
+				/*
+				 * if CELL == " "
+				 * 	continue
+				 * if CELL == target.player.gamePiece
+				 * 	player.{x: +row.indexOf()+1, y: +cell.indexOf()+1}
+				 *
+				 * if key of player.{x || y || (x && y)} == 5
+				 * 	win
+				 */
+			}
+		}
 	}
 
+	// Consider Object.apply()
 	const CreateGame = (playerSigil, oppSigil) => {
 		const game = new Game()
 		const board = new Board(game)
-		return {
-			game,
-			// game: new Game(), // why doesn't this work?
-			board,
-			// board: new Board(game), // why doesn't this work?
-			player : new Player(playerSigil, game, board),
-			opponent: new Player(oppSigil, game, board),
-		}
+		const player = new Player(playerSigil, game, board)
+		const opponent = new Player(oppSigil, game, board)
+		const newGame = {game, board, player, opponent}
+		gameArchive.push(newGame)
+		return newGame
 	}
 
 	const Error = (errorType) => {
@@ -33,18 +44,14 @@ const Engine = (function () {
 })()
 
 function Game () {
-	let score = 0
-	let turn = true
-	// const placements = new Array(3).fill(new Array(3)) 
-	// ^ not working as expected
-	const placements = [["", "", ""], ["", "", ""], ["", "", ""]]
+	const placements = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
 
-	return {score, turn, placements}
+	return {placements}
 }
 
 function Player (gamepiece, game, board) {
 	const Move = (x, y) => {
-		if (game.placements[x][y] == ""){
+		if (game.placements[x][y] == " "){
 			game.placements[x][y] = gamepiece
 			board.Update()
 		} else {
