@@ -11,33 +11,30 @@ const Engine = (function () {
 				if (cell == " ") {
 					continue
 				}
-				else if (cell == target.player.gamePiece) {
-					target.player.scoreX += target.game.placements[rowIndex].indexOf(cell) + 1
-					target.player.scoreY += target.game.placements.indexOf(row) + 1
-				}
-				else if (cell == target.opponent.gamePiece) {
-					target.opponent.scoreX += target.game.placements[rowIndex].indexOf(cell)
-					target.opponent.scoreY += target.game.placements.indexOf(row)
-				}
-				if (target.player.scoreX == 6 || target.player.scoreY == 6 || (target.player.scoreX == 6 && target.player.scoreY == 6)){
-					console.log("You win")
-				}
-				else if (target.opponent.scoreX == 6 || target.opponent.scoreY == 6 || (target.opponent.scoreX == 5 && target.player.scoreY == 6)){
-					console.log("Computer wins")
-				}
-				else {
-					console.log("no winner")
-				}
 
 				/*
-				 * if CELL == " "
-				 * 	continue
-				 * if CELL == target.player.gamePiece
-				 * 	player.{x: +row.indexOf()+1, y: +cell.indexOf()+1}
+				 * score array: 
+				 * [0] = row 1, [1] = row 2, [2] = row 3
+				 * [3] = col 1, [4] = col 2, [5] = col 3
+				 * [6] = dia 1, [7] = dia 2
 				 *
-				 * if key of player.{x || y || (x && y)} == 5
+				 * array playerScore[length = 8]
+				 * array oppScore[length = 8]
+				 *
+				 * for row in gameboard
+				 * 		for cell in row
+				 * 			if cell == gamepiece
+				 * 			 increase score[row.index]
+				 * 			 increase score[2 + col.index]
+				 * 			 if (0, 0 || 2, 2)	
+				 * 			 	increase dia 1
+				 * 			 if (0, 2 || 2, 0)
+				 *				increase dia 2
+				 *
+				 * if cell in gameboard == 3
 				 * 	win
 				 */
+
 			}
 		}
 	}
