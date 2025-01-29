@@ -4,9 +4,31 @@ const Engine = (function () {
 	let currentGame = gameArchive[gameArchive.length-1]
 	let turn = false
 
-	const Evaluate = (target) => {
+	function Evaluate (target) {
 		for (row of target.game.placements) {
+			let rowIndex = target.game.placements.indexOf(row)
 			for (cell of row) {
+				if (cell == " ") {
+					continue
+				}
+				else if (cell == target.player.gamePiece) {
+					target.player.scoreX += target.game.placements[rowIndex].indexOf(cell) + 1
+					target.player.scoreY += target.game.placements.indexOf(row) + 1
+				}
+				else if (cell == target.opponent.gamePiece) {
+					target.opponent.scoreX += target.game.placements[rowIndex].indexOf(cell)
+					target.opponent.scoreY += target.game.placements.indexOf(row)
+				}
+				if (target.player.scoreX == 6 || target.player.scoreY == 6 || (target.player.scoreX == 6 && target.player.scoreY == 6)){
+					console.log("You win")
+				}
+				else if (target.opponent.scoreX == 6 || target.opponent.scoreY == 6 || (target.opponent.scoreX == 5 && target.player.scoreY == 6)){
+					console.log("Computer wins")
+				}
+				else {
+					console.log("no winner")
+				}
+
 				/*
 				 * if CELL == " "
 				 * 	continue
@@ -49,17 +71,19 @@ function Game () {
 	return {placements}
 }
 
-function Player (gamepiece, game, board) {
+function Player (gamePiece, game, board) {
+	let scoreX = 0;
+	let scoreY = 0;
 	const Move = (x, y) => {
 		if (game.placements[x][y] == " "){
-			game.placements[x][y] = gamepiece
+			game.placements[x][y] = gamePiece
 			board.Update()
 		} else {
 			Engine.Error("move")
 		}
 	}
 
-	return {gamepiece, game, board, Move}
+	return {gamePiece, game, board, scoreX, scoreY, Move}
 }
 
 function Board (game) {
@@ -73,4 +97,13 @@ function Board (game) {
 	return {Update}
 }
 
+let newGame = Engine.CreateGame("x", "o")
+newGame.player.Move(0, 0)
+newGame.player.Move(1, 0)
+// newGame.player.Move(2, 0)
+newGame.player.Move(2, 1)
+
+// newGame.opponent.Move(1, 0)
+// newGame.opponent.Move(1, 1)
+// newGame.opponent.Move(1, 2)
 
