@@ -4,73 +4,7 @@ const Engine = (function () {
 	let currentGame = gameArchive[gameArchive.length-1]
 	let turn = false
 
-	function Evaluate (target) {
-		ResetScore(target)
-		let gamePlacements = target.game.placements
-
-		for (let row = 0; row < gamePlacements.length; row ++) { // rows
-
-			for (let col = 0; col < gamePlacements[row].length; col++) {
-
-				if (gamePlacements[row][col] != " ") {
-					let playerPlacement = gamePlacements[row][col] 
-						== target.player.gamePiece ? true : false
-					let diagonalLeft = (row == 0 && col == 0) || (row == 2 && col == 2)
-					let diagonalRight = (row == 2 && col == 0) || (row == 0 && col == 2)
-					let centerPlacement = (row == 1 && col == 1)
-					if (playerPlacement) {
-						target.player.score[row]++
-						target.player.score[3 + col]++
-						if (diagonalLeft) {target.player.score[6]++}
-						if (diagonalRight) {target.player.score[7]++}
-						if (centerPlacement) { 
-							target.player.score[6]++
-							target.player.score[7]++
-						}
-					} else {
-
-					}
-				} else { continue }
-
-			}
-
-		}
-
-
-	/*
-	 * score array: 
-	 * [0] = row 1, [1] = row 2, [2] = row 3
-	 * [3] = col 1, [4] = col 2, [5] = col 3
-	 * [6] = dia L, [7] = dia R
-	 *
-	 * array playerScore[length = 8]
-	 * array oppScore[length = 8]
-	 *
-	 * score[all] = 0
-	 *
-	 * for row in gameboard
-	 * 		for cell in row
-	 * 			if cell == gamepiece
-	 * 			 increase score[row.index]
-	 * 			 increase score[3 + col.index]
-	 * 			 if (0, 0 || 2, 2)	
-	 * 			 	increase dia 1
-	 * 			 if (0, 2 || 2, 0)
-	 *				increase dia 2
-	 *			 if (1, 1)
-	 *			 	increase dia 1 & 2
-	 *
-	 * if score[any] == 3
-	 * 	win
-	 */
-
-	/*
-	 * for (let i = 0; i < target.game.placements)
-	 * */
-
-	}
-
-	// Consider Object.apply()
+	// Consider Object.apply() ??
 	const CreateGame = (playerSigil, oppSigil) => {
 		const game = new Game()
 		const board = new Board(game)
@@ -81,9 +15,45 @@ const Engine = (function () {
 		return newGame
 	}
 
-	function ResetScore (game) {
-		game.player.score.fill(0)
-		game.opponent.score.fill(0)
+	function Evaluate (player) {
+		ResetScore(player)
+		let gamePlacements = player.game.placements
+
+		for (let row = 0; row < gamePlacements.length; row ++) { // rows
+			for (let col = 0; col < gamePlacements[row].length; col++) {
+				if (gamePlacements[row][col] != " ") {
+					let playerPlacement = gamePlacements[row][col] 
+						== player.gamePiece ? true : false
+					let diagonalLeft = (row == 0 && col == 0) || (row == 2 && col == 2)
+					let diagonalRight = (row == 2 && col == 0) || (row == 0 && col == 2)
+					let centerPlacement = (row == 1 && col == 1)
+					if (playerPlacement) {
+						player.score[row]++
+						player.score[3 + col]++
+						if (diagonalLeft) {player.score[6]++}
+						if (diagonalRight) {player.score[7]++}
+						if (centerPlacement) { 
+							player.score[6]++
+							player.score[7]++
+						}
+					}
+				} else { continue }
+			}
+		}
+
+		if (player.score.filter( (e) => e == 3 ).length != 0) {
+			console.log(player.score)
+			WinGame(player)	
+		}
+		else { /* turn */ }
+	}
+
+	function WinGame (player) {
+		console.log(player.gamePiece + " wins the game!")
+	}
+
+	function ResetScore (player) {
+		player.score.fill(0)
 	}
 
 	const Error = (errorType) => {
@@ -106,10 +76,11 @@ function Game () {
 
 function Player (gamePiece, game, board) {
 	let score = new Array(8).fill(0);
-	const Move = (x, y) => {
+	function Move (x, y) {
 		if (game.placements[x][y] == " "){
 			game.placements[x][y] = gamePiece
 			board.Update()
+			Engine.Evaluate(this)
 		} else {
 			Engine.Error("move")
 		}
