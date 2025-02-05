@@ -1,17 +1,17 @@
 
 const Engine = (function () {
 	let gameArchive = []
-	let currentGame = gameArchive[gameArchive.length-1]
 	let turn = false
 
 	// Consider Object.apply() ??
-	const CreateGame = (playerSigil, oppSigil) => {
+	function CreateGame (playerSigil, oppSigil) {
 		const game = new Game()
 		const board = new Board(game)
 		const player = new Player(playerSigil, game, board)
 		const opponent = new Player(oppSigil, game, board)
 		const newGame = {game, board, player, opponent}
 		gameArchive.push(newGame)
+
 		return newGame
 	}
 
@@ -46,6 +46,7 @@ const Engine = (function () {
 			WinGame(player)	
 		}
 		else { /* turn */ }
+
 	}
 
 	function WinGame (player) {
@@ -54,6 +55,10 @@ const Engine = (function () {
 
 	function ResetScore (player) {
 		player.score.fill(0)
+	}
+
+	function currentGame () {
+		return gameArchive[gameArchive.length - 1]
 	}
 
 	const Error = (errorType) => {
