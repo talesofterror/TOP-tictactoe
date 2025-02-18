@@ -15,7 +15,7 @@ const Engine = (function () {
 	}
 
 	function Evaluate (player) {
-		ResetScore(player)
+		player.ResetScore()
 		let gamePlacements = player.game.placements
 
 		for (let row = 0; row < gamePlacements.length; row ++) { // rows
@@ -52,11 +52,7 @@ const Engine = (function () {
 		console.log(player.gamePiece + " wins the game!")
 	}
 
-	function ResetScore (player) {
-		player.score.fill(0)
-	}
-
-	function currentGame () {
+	function GetCurrentGame () {
 		return gameArchive[gameArchive.length - 1]
 	}
 
@@ -68,21 +64,21 @@ const Engine = (function () {
 	}
 
 	return {
-		gameArchive, currentGame, turn, 
+		gameArchive, currentGame: GetCurrentGame, turn, 
 		Evaluate, CreateGame, Error}
 })()
 
 function Grid () {
 	const placements = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
 
-	const PrintBoard = () => {
+	const LogBoard = () => {
 		console.log(placements[0])
 		console.log(placements[1])
 		console.log(placements[2])
 		console.log(" ")
 	}
 
-	return {placements, PrintBoard}
+	return {placements, PrintBoard: LogBoard}
 }
 
 function Player(gamePiece, game) {
@@ -97,7 +93,14 @@ function Player(gamePiece, game) {
 		}
 	}
 
-	return {gamePiece, game, score, Move}
+	function ResetScore () {
+		score.fill(0)
+	}
+
+	return {
+		gamePiece, game, score, 
+		Move, ResetScore
+	}
 }
 
 let newGame = Engine.CreateGame("x", "o")
