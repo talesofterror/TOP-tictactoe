@@ -5,11 +5,10 @@ const Engine = (function () {
 
 	// Consider Object.apply() ??
 	function CreateGame (playerSigil, oppSigil) {
-		const game = new Game()
-		const board = new Board(game)
-		const player = new Player(playerSigil, game, board)
-		const opponent = new Player(oppSigil, game, board)
-		const newGame = {game, board, player, opponent}
+		const game = new Grid()
+		const player = new Player(playerSigil, game)
+		const opponent = new Player(oppSigil, game)
+		const newGame = {game, player, opponent}
 		gameArchive.push(newGame)
 
 		return newGame
@@ -22,12 +21,12 @@ const Engine = (function () {
 		for (let row = 0; row < gamePlacements.length; row ++) { // rows
 			for (let col = 0; col < gamePlacements[row].length; col++) {
 				if (gamePlacements[row][col] != " ") {
-					let playerPlacement = gamePlacements[row][col] 
+					let noPrevPlacement = gamePlacements[row][col] 
 						== player.gamePiece ? true : false
 					let diagonalLeft = (row == 0 && col == 0) || (row == 2 && col == 2)
 					let diagonalRight = (row == 2 && col == 0) || (row == 0 && col == 2)
 					let centerPlacement = (row == 1 && col == 1)
-					if (playerPlacement) {
+					if (noPrevPlacement) {
 						player.score[row]++
 						player.score[3 + col]++
 						if (diagonalLeft) {player.score[6]++}
@@ -73,36 +72,32 @@ const Engine = (function () {
 		Evaluate, CreateGame, Error}
 })()
 
-function Game () {
+function Grid () {
 	const placements = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
 
-	return {placements}
+	const PrintBoard = () => {
+		console.log(placements[0])
+		console.log(placements[1])
+		console.log(placements[2])
+		console.log(" ")
+	}
+
+	return {placements, PrintBoard}
 }
 
-function Player (gamePiece, game, board) {
+function Player(gamePiece, game) {
 	let score = new Array(8).fill(0);
 	function Move (x, y) {
 		if (game.placements[x][y] == " "){
 			game.placements[x][y] = gamePiece
-			board.Update()
+			game.PrintBoard()
 			Engine.Evaluate(this)
 		} else {
 			Engine.Error("move")
 		}
 	}
 
-	return {gamePiece, game, board, score, Move}
-}
-
-function Board (game) {
-	const Update = () => {
-		console.log(game.placements[0])
-		console.log(game.placements[1])
-		console.log(game.placements[2])
-		console.log(" ")
-	}
-
-	return {Update}
+	return {gamePiece, game, score, Move}
 }
 
 let newGame = Engine.CreateGame("x", "o")

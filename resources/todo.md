@@ -2,7 +2,11 @@
 
 ## Objects 
 
-**Game Object**
+**Engine**
+- turns
+- board evaluator
+
+**Game**
 - result
 - placements
 
@@ -10,10 +14,6 @@
 - player inputs
 - computer inputs
 - gamepiece choice
-
-**Game Logic**
-- turns
-- board evaluator
 
 **Board Object**
 - gameboard visualization
