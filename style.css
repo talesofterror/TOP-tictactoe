@@ -1,3 +1,13 @@
+/* 
+ *
+ * Media Query for devices smaller than 500 css pixels? 
+ * 	move title to top, straighten
+ * 	interface options below title next to each other centered or to the right, and bigger
+ *
+ * Current layout: interface options don't center on mobile for some reason
+ *
+ * */
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -9,13 +19,16 @@
 :root {
 	height: 100vh;
 	font-size: 1.5vh;
-	--cell-border-color: yellow;
-	--cell-border-size: 1px;
+	--main-background-color: #333;
+	--main-text-color: #fdf;
+	--cell-border-color: orange;
+	--cell-border-size: 2px;
+	--cell-border-radius: 3em;
 }
 
 body {
-	color: #fdf;
-	background-color: #333;
+	color: var(--main-text-color);
+	background-color: var(--main-background-color);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -29,7 +42,7 @@ main {
 	height: 50%;
 	/* margin: 0 0% 0 25%; */
 	/* padding: 0 0 0 5%; */
-	border: 1px solid red;
+	/* border: 1px solid red; */
 }
 
 .interface {
@@ -46,7 +59,7 @@ main {
 	flex-grow: 1;
 	width: 100%;
 	align-content: center;
-	justify-items: center;
+	/* justify-items: center; */
 }
 
 .title {
@@ -56,13 +69,13 @@ main {
 }
 
 .newgame, .info {
-	text-align: center;
+	text-align: center !important;
 }
 
 .board {
 	position: relative;
 	grid-area: 1 / 2 / 2 / 4;
-	border: 1px solid teal;
+	/* border: 1px solid teal; */
 	height: 100%;
 	width: 100%;
 }
@@ -84,7 +97,8 @@ main {
 }
 
 .cell {
-	border: 1px solid orange;
+	border-style: solid;
+	border-color: var(--cell-border-color);
 	height: 100%;
 	width: 100%;
 }
