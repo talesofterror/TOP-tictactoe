@@ -9,6 +9,8 @@
 :root {
 	height: 100vh;
 	font-size: 1.5vh;
+	--cell-border-color: yellow;
+	--cell-border-size: 1px;
 }
 
 body {
@@ -22,11 +24,11 @@ body {
 
 main {
 	display: grid; 
-	grid: 1fr / 1fr 3fr;
-	width: 50%;
+	grid: 1fr / 1fr 1fr 3fr;
+	/* width: 50%; */
 	height: 50%;
-	margin: 0 25% 0 25%;
-	padding: 0 0 0 5%;
+	/* margin: 0 0% 0 25%; */
+	/* padding: 0 0 0 5%; */
 	border: 1px solid red;
 }
 
@@ -40,6 +42,7 @@ main {
 }
 
 .interface>div {
+	grid-area: 1 / 1 / 2 / 2;
 	flex-grow: 1;
 	width: 100%;
 	align-content: center;
@@ -56,8 +59,46 @@ main {
 	text-align: center;
 }
 
-.grid {
+.board {
+	position: relative;
+	grid-area: 1 / 2 / 2 / 4;
 	border: 1px solid teal;
 	height: 100%;
-	width: 75%;
+	width: 100%;
+}
+
+.grid {
+	display: grid;
+	grid: repeat(3, 1fr)/ 1fr;
+	position: absolute;
+	/* border: 1px solid green; */
+	width: 100%;
+	height: 100%;
+}
+
+.row {
+	display: grid;
+	grid: 1fr / repeat(3, 1fr);
+	/* border: 1px solid yellow; */
+	height: 100%;
+}
+
+.cell {
+	border: 1px solid orange;
+	height: 100%;
+	width: 100%;
+}
+
+.result-screen {
+	position: absolute;
+	/* border: 1px solid #433; */
+	width: 100%;
+	height: 100%;
+}
+
+.info-screen {
+	position: absolute;
+	/* border: 1px solid #4ad; */
+	width: 100%;
+	height: 100%;
 }
