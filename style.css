@@ -19,10 +19,12 @@
 :root {
 	height: 100vh;
 	font-size: 1.5vh;
-	--main-background-color: #333;
-	--main-text-color: #fdf;
+	--main-background-color: #272727;
+	--main-text-color: #d32;
+	--accent-background-color: #d32;
+	--grid-background-color: #1f1f1f;
 	--cell-border-color: orange;
-	--cell-border-size: 2px;
+	--cell-border-size: 3px;
 	--cell-border-radius: 3em;
 }
 
@@ -37,11 +39,8 @@ body {
 
 main {
 	display: grid; 
-	grid: 1fr / 1fr 1fr 3fr;
-	/* width: 50%; */
+	grid: 1fr / 1fr 1fr 2fr;
 	height: 50%;
-	/* margin: 0 0% 0 25%; */
-	/* padding: 0 0 0 5%; */
 	/* border: 1px solid red; */
 }
 
@@ -54,7 +53,7 @@ main {
 	align-items: center;
 }
 
-.interface>div {
+.interface div {
 	grid-area: 1 / 1 / 2 / 2;
 	flex-grow: 1;
 	width: 100%;
@@ -64,11 +63,15 @@ main {
 
 .title {
 	font-size: 8em;
+	font-family: HR-Reg;
+	letter-spacing: -0.5em;
 	writing-mode: vertical-rl;
   text-orientation: upright;
+	cursor: default;
 }
 
 .newgame, .info {
+	font-family: HR-Sherm;
 	text-align: center !important;
 }
 
@@ -81,6 +84,17 @@ main {
 }
 
 .grid {
+	position: relative;
+	display: grid;
+	grid: repeat(3, 1fr)/ 1fr;
+	position: absolute;
+	/* border: 1px solid green; */
+	width: 100%;
+	height: 100%;
+}
+
+.grid-bg {
+	position: absolute;
 	display: grid;
 	grid: repeat(3, 1fr)/ 1fr;
 	position: absolute;
@@ -97,10 +111,26 @@ main {
 }
 
 .cell {
+	background-color: var(--grid-background-color);
+	text-align: center;
+	align-items: center;
 	border-style: solid;
 	border-color: var(--cell-border-color);
+	border-radius: var(--cell-border-radius);
 	height: 100%;
 	width: 100%;
+}
+
+.cell-bg {
+	background-color: var(--grid-background-color);
+	border-radius: var(--cell-border-radius);
+	height: 100%;
+	width: 100%;
+}
+
+.cell:hover {
+	content: "x";
+	background-color: var(--accent-background-color);
 }
 
 .result-screen {
@@ -116,3 +146,19 @@ main {
 	width: 100%;
 	height: 100%;
 }
+
+@font-face {
+	font-family: "HR-Reg";
+	src: url("assets/HobeauxRococeaux-Regular.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "HR-Bg";
+	src: url("assets/HobeauxRococeaux-Background.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "HR-Sherm";
+	src: url("assets/HobeauxRococeaux-Sherman.woff2") format("woff2");
+}
+
