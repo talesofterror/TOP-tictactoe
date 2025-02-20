@@ -7,8 +7,6 @@
  * Current layout: interface options don't center on mobile for some reason
  *
  * 2/19/2025: Discovered that everything is broken in Firefox
- * 	gameboard could possibly be fixed by changes the main grid -- 4 equal columns
- * 	or 1fr 3fr? Then adjusting grid-areas as needed. 
  * 	letter-spacing for the title displays correctly in chrome with -0.5em
  * 	and correctly in FF without specifying
  *
@@ -47,8 +45,9 @@ body {
 
 main {
 	display: grid; 
-	grid: 1fr / 1fr 1fr 2fr;
+	grid: 1fr / 1fr 1fr 1fr;
 	height: 50%;
+	width: calc(50em + 0.5vw);
 	/* border: 1px solid red; */
 }
 
