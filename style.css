@@ -27,11 +27,11 @@
 	--main-text-color: #d32;
 	--accent-text-color: #ff6000;
 	--accent-background-color: #dd3322;
-	--grid-foreground-color: #d32;
+	--grid-main-foreground-color: #272727;
 	--grid-background-color: #1f1f1f;
 	--cell-border-color: orange;
 	--cell-border-size: 3px;
-	--cell-border-radius: 5em / 7em;
+	--cell-border-radius: 3em / 3em;
 }
 
 body {
@@ -52,25 +52,27 @@ main {
 }
 
 .interface {
-	height: 100%;
+	grid-area: 1 / 1 / 2 / 2;
 	width: 100%;
+	height: 100%;
 	display: flex;
 	flex-direction:  column;
 	justify-content: space-around;
-	align-items: center;
+	align-content: end;
 }
 
 .interface div {
-	grid-area: 1 / 1 / 2 / 2;
 	flex-grow: 1;
 	width: 100%;
 	align-content: center;
 	/* justify-items: center; */
+	/* padding-left: 50%; */
 }
 
 .title {
+	flex-grow: 1;
 	font-size: 8em;
-	font-family: HR-Reg;
+	font-family: HR-Bg;
 	letter-spacing: -0.5em;
 	writing-mode: vertical-rl;
   text-orientation: upright;
@@ -130,7 +132,7 @@ main {
 	display: flex;
 	font-family: HR-Bg;
 	font-size: 6em;
-	color: var(--grid-foreground-color);
+	color: var(--grid-main-foreground-color);
 	background-color: var(--grid-background-color);
 	justify-content: center;
 	align-items: center;
@@ -146,6 +148,10 @@ main {
 .cell:hover {
 	color: #000000;
 	background-color: var(--accent-background-color);
+}
+
+.cell-user-hover {
+	font-family: HR-Reg;
 }
 
 .cell-bg {
