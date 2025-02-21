@@ -2,10 +2,11 @@
 const Engine = (function () {
 	let gameArchive = []
 	let turn = false
+	const gameboardElement = document.getElementById("gameboard")
 
 	// Consider Object.apply() ??
 	function CreateGame (playerSigil, oppSigil) {
-		const game = new Grid()
+		const game = new Game()
 		const player = new Player(playerSigil, game)
 		const opponent = new Player(oppSigil, game)
 		const newGame = {game, player, opponent}
@@ -64,12 +65,27 @@ const Engine = (function () {
 	}
 
 	return {
-		gameArchive, currentGame: GetCurrentGame, turn, 
+		gameArchive, gameboardElement, GetCurrentGame, turn, 
 		Evaluate, CreateGame, Error}
 })()
 
-function Grid () {
+function Game () {
 	const placements = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
+
+	let boardElement = Array.from(document.getElementById("gameboard"))
+	let cells = Array(3)
+
+	function DrawBoard () {
+		for (let i = 0; i < boardElement.length; i++) {
+			cells[i] = Array.from(boardElement[i])
+		}
+
+		for (let i = 0; i < boardElement.length; i++) {
+			for (let j = 0; j < boardElement[i].children.length; j++) {
+				boardElement[i].children[j].textContent = placements[i][j]
+			}
+		}
+	}
 
 	const LogBoard = () => {
 		console.log(placements[0])
@@ -78,7 +94,7 @@ function Grid () {
 		console.log(" ")
 	}
 
-	return {placements, PrintBoard: LogBoard}
+	return {placements, boardElement, cells, DrawBoard, LogBoard}
 }
 
 function Player(gamePiece, game) {
@@ -86,7 +102,7 @@ function Player(gamePiece, game) {
 	function Move (x, y) {
 		if (game.placements[x][y] == " "){
 			game.placements[x][y] = gamePiece
-			game.PrintBoard()
+			game.LogBoard()
 			Engine.Evaluate(this)
 		} else {
 			Engine.Error("move")
