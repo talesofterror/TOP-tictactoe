@@ -45,26 +45,29 @@ body {
 
 main {
 	display: grid; 
-	grid: 1fr / 1fr 1fr 1fr;
+	grid: 1fr / 0.2fr 1fr 1fr 1fr;
 	height: 50%;
 	width: calc(50em + 0.5vw);
 	/* border: 1px solid red; */
 }
 
 .interface {
-	grid-area: 1 / 1 / 2 / 2;
-	width: 100%;
+	grid-area: 1 / 2 / 2 / 3;
+	/* width: 50%; */
 	height: 100%;
 	display: flex;
 	flex-direction:  column;
 	justify-content: space-around;
-	align-content: end;
+	/* align-items: center; */
+	/* align-content: center; */
 }
 
-.interface div {
+.interface>div {
+	display: flex;
 	flex-grow: 1;
-	width: 100%;
-	align-content: center;
+	/* height: fit-content; */
+	/* width: 100%; */
+	align-items: center;
 	/* justify-items: center; */
 	/* padding-left: 50%; */
 }
@@ -79,16 +82,28 @@ main {
 	cursor: default;
 }
 
+.options {
+	flex-direction: column;
+	align-items: center;
+}
+
 .newgame, .info {
+	/* width: fit-content; */
+	/* align-self: center; */
+	width: fit-content;
 	color: var(--accent-text-color);
 	font-family: HR-Sherm;
 	text-align: center !important;
 	cursor: pointer;
 }
 
+.newgame:hover, .info:hover {
+	color: var(--cell-border-color);
+}
+
 .board {
 	position: relative;
-	grid-area: 1 / 2 / 2 / 4;
+	grid-area: 1 / 3 / 2 / 5;
 	/* border: 1px solid teal; */
 	height: 100%;
 	width: 100%;
@@ -196,3 +211,9 @@ main {
 	src: url("assets/HobeauxRococeaux-Sherman.woff2") format("woff2");
 }
 
+@-moz-document url-prefix() {
+	.title {
+		letter-spacing: 0em;
+		margin-top: 0.3em;
+	}
+}
