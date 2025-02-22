@@ -72,7 +72,7 @@ const Engine = (function () {
 function Game () {
 	const placements = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
 
-	let boardElement = Array.from(document.getElementById("gameboard"))
+	let boardElement = Engine.gameboardElement.children
 	let cells = Array(3)
 
 	function DrawBoard () {
@@ -82,7 +82,7 @@ function Game () {
 
 		for (let i = 0; i < boardElement.length; i++) {
 			for (let j = 0; j < boardElement[i].children.length; j++) {
-				boardElement[i].children[j].textContent = placements[i][j]
+				boardElement[i].children[j].textContent = newGame.game.placements[i][j]
 			}
 		}
 	}
@@ -94,7 +94,7 @@ function Game () {
 		console.log(" ")
 	}
 
-	return {placements, boardElement, cells, DrawBoard, LogBoard}
+	return {placements, DrawBoard, LogBoard}
 }
 
 function Player(gamePiece, game) {
@@ -103,6 +103,7 @@ function Player(gamePiece, game) {
 		if (game.placements[x][y] == " "){
 			game.placements[x][y] = gamePiece
 			game.LogBoard()
+			game.DrawBoard()
 			Engine.Evaluate(this)
 		} else {
 			Engine.Error("move")
@@ -119,13 +120,11 @@ function Player(gamePiece, game) {
 	}
 }
 
-let newGame = Engine.CreateGame("x", "o")
-newGame.player.Move(0, 0)
-newGame.player.Move(1, 0)
-// newGame.player.Move(2, 0)
-newGame.player.Move(2, 1)
-
+// let newGame = Engine.CreateGame("x", "o")
+// newGame.player.Move(0, 0)
+// newGame.player.Move(1, 0)
+// newGame.player.Move(2, 1)
+//
 // newGame.opponent.Move(1, 0)
 // newGame.opponent.Move(1, 1)
-// newGame.opponent.Move(1, 2)
 
