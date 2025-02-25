@@ -1,7 +1,7 @@
 
 const Engine = (function () {
 	let gameArchive = []
-	let turn = false
+	let userTurn = false
 	const gameboardElement = document.getElementById("gameboard")
 
 	// Consider Object.apply() ??
@@ -10,7 +10,9 @@ const Engine = (function () {
 		const player = new Player(playerSigil, game)
 		const opponent = new Player(oppSigil, game)
 		const newGame = {game, player, opponent}
+		game.InitializeBoard()
 		gameArchive.push(newGame)
+		player.InitializeListeners()
 
 		return newGame
 	}
@@ -65,7 +67,7 @@ const Engine = (function () {
 	}
 
 	return {
-		gameArchive, gameboardElement, GetCurrentGame, turn, 
+		gameArchive, gameboardElement, GetCurrentGame, turn: userTurn, 
 		Evaluate, CreateGame, Error}
 })()
 
@@ -73,13 +75,18 @@ function Game () {
 	const placements = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
 
 	let boardElement = Engine.gameboardElement.children
-	let cells = Array(3)
+	let cells = structuredClone(placements)
+
+	function InitializeBoard (player) {
+		for (let i = 0; i < boardElement.length; i++) {
+			for (let j = 0; j < boardElement[i].children.length; j++) {
+				cells[i][j] = boardElement[i].children[j]
+				cells[i][j].textContent = "-"
+			}
+		}		
+	}
 
 	function DrawBoard () {
-		for (let i = 0; i < boardElement.length; i++) {
-			cells[i] = Array.from(boardElement[i])
-		}
-
 		for (let i = 0; i < boardElement.length; i++) {
 			for (let j = 0; j < boardElement[i].children.length; j++) {
 				boardElement[i].children[j].textContent = newGame.game.placements[i][j]
@@ -94,11 +101,11 @@ function Game () {
 		console.log(" ")
 	}
 
-	return {placements, DrawBoard, LogBoard}
+	return {placements, cells, InitializeBoard, DrawBoard, LogBoard}
 }
 
 function Player(gamePiece, game) {
-	let score = new Array(8).fill(0);
+	let score = new Array(8).fill(0)
 	function Move (x, y) {
 		if (game.placements[x][y] == " "){
 			game.placements[x][y] = gamePiece
@@ -111,16 +118,28 @@ function Player(gamePiece, game) {
 	}
 
 	function ResetScore () {
-		score.fill(0)
+		this.score.fill(0)
+	}
+
+	function InitializeListeners () {
+		if (!game.cells[0][0].getAttribute("listener")) {
+			game.cells.forEach( (row, rIndex) => {
+				row.forEach( (column, cIndex) => {
+					column.addEventListener ( "click", () => {
+						Move(rIndex, cIndex)
+					})
+				})
+			})
+		}
 	}
 
 	return {
 		gamePiece, game, score, 
-		Move, ResetScore
+		Move, ResetScore, InitializeListeners
 	}
 }
 
-// let newGame = Engine.CreateGame("x", "o")
+let newGame = Engine.CreateGame("x", "o")
 // newGame.player.Move(0, 0)
 // newGame.player.Move(1, 0)
 // newGame.player.Move(2, 1)
