@@ -13,6 +13,7 @@ const Engine = (function () {
 		game.InitializeBoard()
 		gameArchive.push(newGame)
 		player.InitializeListeners()
+		player.Move.bind(player)
 
 		return newGame
 	}
@@ -77,7 +78,7 @@ function Game () {
 	let boardElement = Engine.gameboardElement.children
 	let cells = structuredClone(placements)
 
-	function InitializeBoard (player) {
+	function InitializeBoard () {
 		for (let i = 0; i < boardElement.length; i++) {
 			for (let j = 0; j < boardElement[i].children.length; j++) {
 				cells[i][j] = boardElement[i].children[j]
@@ -122,11 +123,12 @@ function Player(gamePiece, game) {
 	}
 
 	function InitializeListeners () {
+
 		if (!game.cells[0][0].getAttribute("listener")) {
 			game.cells.forEach( (row, rIndex) => {
 				row.forEach( (column, cIndex) => {
 					column.addEventListener ( "click", () => {
-						Move(rIndex, cIndex)
+						this.Move(rIndex, cIndex)
 					})
 				})
 			})
