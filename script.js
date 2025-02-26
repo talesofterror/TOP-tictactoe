@@ -3,9 +3,37 @@ const Engine = (function () {
 	let gameArchive = []
 	let userTurn = false
 	const gameboardElement = document.getElementById("gameboard")
+	
+	function DialogueHandler (dialogue) {
+		const dialogues = {
+			"new-game": document.getElementById("new-game-dialogue"),
+			"info": document.getElementById("info-dialogue"),
+			"result": document.getElementById("result-dialogue")
+			}
+
+		console.log(dialogues)
+
+		for (e in dialogues) {
+			if (dialogue == e) {
+				if (dialogues[e].classList.contains("invisible")) {
+				dialogues[e].classList.remove("invisible")
+				} else {
+					dialogues[e].classList.add("invisible")
+				}
+			} else {
+				dialogues[e].classList.add("invisible")
+			}
+		}
+	}
 
 	function NewGameDialogue () {
 		let newGameDialogueElement = document.getElementById("new-game-dialogue")
+			if (newGameDialogueElement.classList.contains("invisible")) {
+				newGameDialogueElement.classList.remove("invisible")
+			} else {
+					newGameDialogueElement.classList.add("invisible")
+			}
+
 		console.log(newGameDialogueElement)
 	}
 
@@ -83,7 +111,7 @@ const Engine = (function () {
 
 	return {
 		gameArchive, gameboardElement, userTurn, 
-		Evaluate, NewGameDialogue, InfoDialogue, ResultDialogue, CreateGame, 
+		Evaluate, NewGameDialogue, InfoDialogue, ResultDialogue, DialogueHandler, CreateGame, 
 		Error, GetCurrentGame}
 })()
 
