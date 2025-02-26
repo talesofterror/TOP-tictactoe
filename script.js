@@ -4,6 +4,21 @@ const Engine = (function () {
 	let userTurn = false
 	const gameboardElement = document.getElementById("gameboard")
 
+	function NewGameDialogue () {
+		let newGameDialogueElement = document.getElementById("new-game-dialogue")
+		console.log(newGameDialogueElement)
+	}
+
+	function InfoDialogue() {
+		let infoDialogueElement = document.getElementById("info-dialogue")
+		console.log(infoDialogueElement)
+	}
+
+	function ResultDialogue () {
+		let resultDialogueElement = document.getElementById("result-dialogue")
+		console.log(resultDialogueElement)
+	}
+
 	// Consider Object.apply() ??
 	function CreateGame (playerSigil, oppSigil) {
 		const game = new Game()
@@ -11,9 +26,8 @@ const Engine = (function () {
 		const opponent = new Player(oppSigil, game)
 		const newGame = {game, player, opponent}
 		game.InitializeBoard()
-		gameArchive.push(newGame)
 		player.InitializeListeners()
-		player.Move.bind(player)
+		gameArchive.push(newGame)
 
 		return newGame
 	}
@@ -68,8 +82,9 @@ const Engine = (function () {
 	}
 
 	return {
-		gameArchive, gameboardElement, GetCurrentGame, turn: userTurn, 
-		Evaluate, CreateGame, Error}
+		gameArchive, gameboardElement, userTurn, 
+		Evaluate, NewGameDialogue, InfoDialogue, ResultDialogue, CreateGame, 
+		Error, GetCurrentGame}
 })()
 
 function Game () {
@@ -141,7 +156,7 @@ function Player(gamePiece, game) {
 	}
 }
 
-let newGame = Engine.CreateGame("x", "o")
+// let newGame = Engine.CreateGame("x", "o")
 // newGame.player.Move(0, 0)
 // newGame.player.Move(1, 0)
 // newGame.player.Move(2, 1)

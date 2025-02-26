@@ -12,31 +12,26 @@
 
 			<div class="interface">
 
-				<div class="title">
+				<div class="title no-select">
 					<span>#XO</span>
 				</div>
 
-				<div class="options">
+				<div class="options no-select">
 
 					<div class="newgame">
-						<span>New Game</span>
+						<span onclick=`${Engine.NewGameDialogue()}`>New Game</span>
 					</div>
 
 					<div class="info">
-						<span>Info</span>
+						<span onclick=`${Engine.InfoDialogue()}`>Info</span>
 					</div>
 
 				</div>
 
 			</div>
 
-			<div class="board">
+			<div class="board no-select">
 
-				<div class="result-screen">
-				</div>	
-
-				<div class="info-screen">
-				</div>
 
 				<div class="grid-bg">
 					<div class="row">
@@ -73,6 +68,20 @@
 						<div class="cell" style="border-width: 0 var(--cell-border-size) var(--cell-border-size) 0"><span>e</span></div>
 					</div>
 				</div>
+
+				<div class="game-dialogue">
+
+					<div id="new-game-dialogue">
+						<p>Choose your gamepiece:</p>
+						<p><span id="1">x</span> or <span id="0">y</span></p>
+						<p><span>x</span> moves first</p>
+					</div>
+					<div class="invisible" id="result-dialogue">
+					</div>
+					<div class="invisible" id="info-dialogue">
+					</div>
+
+				</div>	
 
 			</div>
 

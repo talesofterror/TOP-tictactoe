@@ -24,18 +24,18 @@
 	height: 100vh;
 	font-size: 1.5vh;
 	--main-background-color: #272727;
-	--main-text-color: #d32;
-	--accent-text-color: #ff6000;
+	--title-color: #d32;
+	--accent-color-primary: #ff6000;
+	--accent-color-secondary: #cfa400;
 	--accent-background-color: #dd3322;
 	--grid-main-foreground-color: #272727;
 	--grid-background-color: #1f1f1f;
-	--cell-border-color: orange;
 	--cell-border-size: 3px;
 	--cell-border-radius: 3em / 3em;
 }
 
 body {
-	color: var(--main-text-color);
+	color: var(--title-color);
 	background-color: var(--main-background-color);
 	display: flex;
 	justify-content: center;
@@ -91,14 +91,14 @@ main {
 	/* width: fit-content; */
 	/* align-self: center; */
 	width: fit-content;
-	color: var(--accent-text-color);
+	color: var(--accent-color-primary);
 	font-family: HR-Sherm;
 	text-align: center !important;
 	cursor: pointer;
 }
 
 .newgame:hover, .info:hover {
-	color: var(--cell-border-color);
+	color: var(--accent-color-secondary);
 }
 
 .board {
@@ -152,7 +152,7 @@ main {
 	justify-content: center;
 	align-items: center;
 	border-style: solid;
-	border-color: var(--cell-border-color);
+	border-color: var(--accent-color-secondary);
 	border-radius: var(--cell-border-radius);
 	height: 100%;
 	width: 100%;
@@ -182,19 +182,45 @@ main {
 	width: 100%;
 }
 
-.result-screen {
+.game-dialogue {
+	display: flex;
+	align-items: center;
 	position: absolute;
-	/* border: 1px solid #433; */
 	width: 100%;
 	height: 100%;
 }
 
-.info-screen {
-	position: absolute;
-	/* border: 1px solid #4ad; */
-	width: 100%;
-	height: 100%;
+.game-dialogue div {
+	--dialogue-size: 60%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--grid-background-color);
+	color: var(--accent-color-secondary);
+	font-family: HR-Sherm;
+	margin: auto;
+	height: var(--dialogue-size);
+	width: var(--dialogue-size);
+	border-radius: 1em;
+	border: var(--cell-border-size) solid var(--accent-color-primary);
 }
+
+.game-dialogue .invisible {
+	display: none;
+}
+
+#new-game-dialogue span {
+	font-family: HR-Bg;
+}
+
+p:nth-child(2) span {
+	color: var(--title-color);
+	font-size: 5em;
+	padding: 0.3em;
+}
+
+/**/
 
 @font-face {
 	font-family: "HR-Reg";
