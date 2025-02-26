@@ -5,25 +5,29 @@ const Engine = (function () {
 	const gameboardElement = document.getElementById("gameboard")
 	
 	function DialogueHandler (dialogue) {
+		const gameDialogueElement = document.getElementById("game-dialogue")
+
 		const dialogues = {
 			"new-game": document.getElementById("new-game-dialogue"),
 			"info": document.getElementById("info-dialogue"),
 			"result": document.getElementById("result-dialogue")
 			}
 
-		console.log(dialogues)
-
 		for (e in dialogues) {
 			if (dialogue == e) {
 				if (dialogues[e].classList.contains("invisible")) {
-				dialogues[e].classList.remove("invisible")
+					dialogues[e].classList.remove("invisible")
+					gameDialogueElement.style.zIndex = 0
 				} else {
 					dialogues[e].classList.add("invisible")
+					gameDialogueElement.style.zIndex = -1
 				}
 			} else {
 				dialogues[e].classList.add("invisible")
 			}
 		}
+
+		console.log(dialogues)
 	}
 
 	function NewGameDialogue () {
