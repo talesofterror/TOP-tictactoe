@@ -39,6 +39,7 @@ const Engine = (function () {
 		userTurn = playerSigil == "x" ? true : false
 		dialogues["new-game"].classList.add("invisible")
 		gameDialogueElement.style.zIndex = -1
+		TurnHandler(newGame.game, userTurn)
 
 		return newGame
 	}
@@ -81,6 +82,17 @@ const Engine = (function () {
 		else { /* turn */ }
 	}
 
+	function TurnHandler (game, turn) {
+		if (!winState) {
+			if (turn) {
+				Engine.gameboardElement.classList.remove("no-click")
+			} else {
+				Engine.gameboardElement.classList.add("no-click")
+				setInterval(game.opponent.OpponentMove(), 1000)
+			}
+			turn = !turn
+		}
+	}
 
 	function WinGame (player) {
 		console.log(player.gamePiece + " wins the game!")
@@ -99,7 +111,7 @@ const Engine = (function () {
 
 	return {
 		gameArchive, gameboardElement, userTurn, 
-		Evaluate, DialogueHandler, CreateGame, GameStart,
+		Evaluate, DialogueHandler, CreateGame, TurnHandler, GameStart,
 		Error, GetCurrentGame }
 })()
 
@@ -121,7 +133,7 @@ function Game () {
 	function DrawBoard () {
 		for (let i = 0; i < boardElement.length; i++) {
 			for (let j = 0; j < boardElement[i].children.length; j++) {
-				boardElement[i].children[j].textContent = newGame.game.placements[i][j]
+				boardElement[i].children[j].textContent = placements[i][j]
 			}
 		}
 	}
@@ -145,7 +157,7 @@ function Player(gamePiece, game) {
 			game.LogBoard()
 			game.DrawBoard()
 			Engine.Evaluate(this)
-			TurnHandler(game, Engine.userTurn)
+			Engine.TurnHandler(game, Engine.userTurn)
 		} else {
 			Engine.Error("move")
 		}
@@ -157,20 +169,9 @@ function Player(gamePiece, game) {
 
 		game.opponent.Move(rndX, rndY)
 
-		TurnHandler(this.game, Engine.userTurn)
+		Engine.TurnHandler(game, Engine.userTurn)
 	}
 
-	function TurnHandler (game, turn) {
-		if (!winState) {
-			if (turn) {
-				Engine.gameboardElement.classList.remove("no-click")
-			} else {
-				Engine.gameboardElement.classList.add("no-click")
-				setInterval(game.opponent.OpponentMove(), 1000)
-			}
-			turn = !turn
-		}
-	}
 
 	function ResetScore () {
 		this.score.fill(0)
@@ -181,7 +182,7 @@ function Player(gamePiece, game) {
 			game.cells.forEach( (row, rIndex) => {
 				row.forEach( (column, cIndex) => {
 					column.addEventListener ( "click", () => {
-						this.Move(rIndex, cIndex)
+						this.UserMove(rIndex, cIndex)
 					})
 				})
 			})
