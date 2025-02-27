@@ -19,11 +19,11 @@
 				<div class="options no-select">
 
 					<div class="newgame">
-						<span onclick=`${Engine.NewGameDialogue()}`>New Game</span>
+						<span onclick=`${Engine.DialogueHandler("new-game")}`>New Game</span>
 					</div>
 
 					<div class="info">
-						<span onclick=`${Engine.InfoDialogue()}`>Info</span>
+						<span onclick=`${Engine.DialogueHandler("info")}`>Info</span>
 					</div>
 
 				</div>
@@ -31,7 +31,6 @@
 			</div>
 
 			<div class="board no-select">
-
 
 				<div class="grid-bg">
 					<div class="row">
@@ -73,7 +72,7 @@
 
 					<div id="new-game-dialogue" class="invisible">
 						<p>Choose your gamepiece:</p>
-						<p><span id="1">x</span> or <span id="0">y</span></p>
+						<p><span onclick='Engine.CreateGame("x", "o")'>x</span> or <span onclick='Engine.CreateGame("o", "x")'>o</span></p>
 						<p><span>x</span> moves first</p>
 					</div>
 					<div id="result-dialogue" class="invisible">

@@ -2,17 +2,16 @@
 const Engine = (function () {
 	let gameArchive = []
 	let userTurn = false
+	let winState = false
 	const gameboardElement = document.getElementById("gameboard")
-	
+	const gameDialogueElement = document.getElementById("game-dialogue")
+	const dialogues = {
+		"new-game": document.getElementById("new-game-dialogue"),
+		"info": document.getElementById("info-dialogue"),
+		"result": document.getElementById("result-dialogue")
+	}
+
 	function DialogueHandler (dialogue) {
-		const gameDialogueElement = document.getElementById("game-dialogue")
-
-		const dialogues = {
-			"new-game": document.getElementById("new-game-dialogue"),
-			"info": document.getElementById("info-dialogue"),
-			"result": document.getElementById("result-dialogue")
-			}
-
 		for (e in dialogues) {
 			if (dialogue == e) {
 				if (dialogues[e].classList.contains("invisible")) {
@@ -26,42 +25,26 @@ const Engine = (function () {
 				dialogues[e].classList.add("invisible")
 			}
 		}
-
-		console.log(dialogues)
 	}
 
-	function NewGameDialogue () {
-		let newGameDialogueElement = document.getElementById("new-game-dialogue")
-			if (newGameDialogueElement.classList.contains("invisible")) {
-				newGameDialogueElement.classList.remove("invisible")
-			} else {
-					newGameDialogueElement.classList.add("invisible")
-			}
-
-		console.log(newGameDialogueElement)
-	}
-
-	function InfoDialogue() {
-		let infoDialogueElement = document.getElementById("info-dialogue")
-		console.log(infoDialogueElement)
-	}
-
-	function ResultDialogue () {
-		let resultDialogueElement = document.getElementById("result-dialogue")
-		console.log(resultDialogueElement)
-	}
-
-	// Consider Object.apply() ??
 	function CreateGame (playerSigil, oppSigil) {
 		const game = new Game()
 		const player = new Player(playerSigil, game)
 		const opponent = new Player(oppSigil, game)
 		const newGame = {game, player, opponent}
+
 		game.InitializeBoard()
 		player.InitializeListeners()
 		gameArchive.push(newGame)
+		userTurn = playerSigil == "x" ? true : false
+		dialogues["new-game"].classList.add("invisible")
+		gameDialogueElement.style.zIndex = -1
 
 		return newGame
+	}
+
+	function GameStart (playerSigil, oppSigil) {
+		CreateGame(playerSigil, oppSigil)
 	}
 
 	function Evaluate (player) {
@@ -92,11 +75,12 @@ const Engine = (function () {
 
 		if (player.score.filter( (e) => e == 3 ).length != 0) {
 			console.log(player.score)
+			winState = true
 			WinGame(player)	
 		}
 		else { /* turn */ }
-
 	}
+
 
 	function WinGame (player) {
 		console.log(player.gamePiece + " wins the game!")
@@ -115,8 +99,8 @@ const Engine = (function () {
 
 	return {
 		gameArchive, gameboardElement, userTurn, 
-		Evaluate, NewGameDialogue, InfoDialogue, ResultDialogue, DialogueHandler, CreateGame, 
-		Error, GetCurrentGame}
+		Evaluate, DialogueHandler, CreateGame, GameStart,
+		Error, GetCurrentGame }
 })()
 
 function Game () {
@@ -149,19 +133,42 @@ function Game () {
 		console.log(" ")
 	}
 
-	return {placements, cells, InitializeBoard, DrawBoard, LogBoard}
+	return { placements, cells, InitializeBoard, DrawBoard, LogBoard }
 }
 
 function Player(gamePiece, game) {
 	let score = new Array(8).fill(0)
-	function Move (x, y) {
+
+	function UserMove (x, y) {
 		if (game.placements[x][y] == " "){
 			game.placements[x][y] = gamePiece
 			game.LogBoard()
 			game.DrawBoard()
 			Engine.Evaluate(this)
+			TurnHandler(game, Engine.userTurn)
 		} else {
 			Engine.Error("move")
+		}
+	}
+
+	function OpponentMove () {
+		let rndX = Math.Floor(Math.Random() * 2)
+		let rndY = Math.Floor(Math.Random() * 2)
+
+		game.opponent.Move(rndX, rndY)
+
+		TurnHandler(this.game, Engine.userTurn)
+	}
+
+	function TurnHandler (game, turn) {
+		if (!winState) {
+			if (turn) {
+				Engine.gameboardElement.classList.remove("no-click")
+			} else {
+				Engine.gameboardElement.classList.add("no-click")
+				setInterval(game.opponent.OpponentMove(), 1000)
+			}
+			turn = !turn
 		}
 	}
 
@@ -170,7 +177,6 @@ function Player(gamePiece, game) {
 	}
 
 	function InitializeListeners () {
-
 		if (!game.cells[0][0].getAttribute("listener")) {
 			game.cells.forEach( (row, rIndex) => {
 				row.forEach( (column, cIndex) => {
@@ -184,7 +190,7 @@ function Player(gamePiece, game) {
 
 	return {
 		gamePiece, game, score, 
-		Move, ResetScore, InitializeListeners
+		UserMove, OpponentMove, ResetScore, InitializeListeners
 	}
 }
 
