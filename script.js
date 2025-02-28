@@ -30,13 +30,13 @@ const Engine = (function () {
 	function CreateGame (playerSigil, oppSigil) {
 		winState = false
 		const game = new Game()
-		const player = new Player(playerSigil, game)
-		const opponent = new Player(oppSigil, game)
+		const player = new Player(playerSigil)
+		const opponent = new Player(oppSigil)
 		const newGame = {game, player, opponent}
 
 		game.InitializeBoard()
-		player.InitializeListeners()
 		gameArchive.push(newGame)
+		player.InitializeListeners()
 		Engine.userTurn = newGame.player.gamePiece == "x" ? true : false
 		dialogues["new-game"].classList.add("invisible")
 		gameDialogueElement.style.zIndex = -1
@@ -53,7 +53,7 @@ const Engine = (function () {
 
 	function Evaluate (player) {
 		player.ResetScore()
-		let gamePlacements = player.game.placements
+		let gamePlacements = Engine.GetCurrentGame().game.placements
 
 		for (let row = 0; row < gamePlacements.length; row ++) { // rows
 			for (let col = 0; col < gamePlacements[row].length; col++) {
@@ -86,7 +86,7 @@ const Engine = (function () {
 	}
 
 	function TurnHandler () {
-		console.log("userTurn value upon entry: " + Engine.userTurn)
+		console.log("userTurn TurnHandler() call: " + Engine.userTurn)
 		if (!winState) {
 			if (Engine.userTurn) {
 				console.log("Switched to user turn")
@@ -96,7 +96,7 @@ const Engine = (function () {
 				console.log("Switched to computer turn")
 				Engine.gameboardElement.classList.add("no-click")
 				console.log("Computer turn")
-				setTimeout(Engine.GetCurrentGame().opponent.OpponentMove(), 1000)
+				Engine.GetCurrentGame().opponent.Move()
 			} 
 			Engine.userTurn = Engine.userTurn
 		}
@@ -117,13 +117,13 @@ const Engine = (function () {
 			case "move":
 				console.log("Invalid move")
 				if (!Engine.userTurn) {
-					Engine.GetCurrentGame().opponent.OpponentMove()
+					Engine.GetCurrentGame().opponent.Move(0,0)
 				}
 		}
 	}
 
 	return {
-		gameArchive, gameboardElement, userTurn, 
+		gameArchive, gameboardElement, userTurn, winState,
 		Evaluate, DialogueHandler, CreateGame, TurnHandler, GameStart,
 		Error, GetCurrentGame }
 })()
@@ -161,40 +161,61 @@ function Game () {
 	return { placements, cells, InitializeBoard, DrawBoard, LogBoard }
 }
 
-function Player(gamePiece, game) {
+function Player(gamePiece) {
+
 	let score = new Array(8).fill(0)
 
-	function UserMove (x, y) {
-		if (game.placements[x][y] == "-"){
-			console.log("User move:")
-			game.placements[x][y] = gamePiece
-			game.LogBoard()
-			game.DrawBoard()
-			Engine.Evaluate(this)
-			Engine.userTurn = !Engine.userTurn
-			Engine.TurnHandler()
-		} else {
-			Engine.Error("move")
+	function Move () {
+		const game = Engine.GetCurrentGame().game
+		console.log (`userTurn on Move() call: ${Engine.userTurn}`)
+		if (Engine.userTurn){
+			console.log(`User move: ${arguments[0]}, ${arguments[1]}`)
+			if (game.placements[arguments[0]][arguments[1]] == "-") {
+				game.placements[arguments[0]][arguments[1]] = gamePiece
+			} else {
+				Engine.Error("move")
+				return
+			}
+		} else if (!Engine.userTurn) {
+				let rndX = Math.floor(Math.random() * 3)
+				let rndY = Math.floor(Math.random() * 3)
+
+				console.log(`Computer move: (${rndX}, ${rndY})`)
+
+				if (game.placements[rndX][rndY] == "-") {
+					game.placements[rndX][rndY] = gamePiece
+				} else {
+					Engine.Error("move")
+					return
+				}
 		}
+
+		let context = Engine.userTurn ? Engine.GetCurrentGame().player 
+			: Engine.GetCurrentGame().opponent
+
+		game.LogBoard()
+		game.DrawBoard()
+		Engine.Evaluate(context)
+		Engine.userTurn = !Engine.userTurn
+		Engine.TurnHandler()
 	}
-
-	function OpponentMove () {
-		let rndX = Math.floor(Math.random() * 3)
-		let rndY = Math.floor(Math.random() * 3)
-
-		console.log(`Computer move: (${rndX}, ${rndY})`)
-
-		if (game.placements[rndX][rndY] == "-"){
-			game.placements[rndX][rndY] = gamePiece
-			game.LogBoard()
-			game.DrawBoard()
-			Engine.Evaluate(this)
-			Engine.userTurn = !Engine.userTurn
-			Engine.TurnHandler()	
-		} else {
-			Engine.Error("move")
-		}
-	}
+	
+	//
+	// function OpponentMove () {
+	//
+	//
+	// 	console.log(`Computer move: (${rndX}, ${rndY})`)
+	//
+	// 	if (game.placements[rndX][rndY] == "-"){
+	// 		game.LogBoard()
+	// 		game.DrawBoard()
+	// 		Engine.Evaluate(this)
+	// 		Engine.userTurn = !Engine.userTurn
+	// 		Engine.TurnHandler()	
+	// 	} else {
+	// 		Engine.Error("move")
+	// 	}
+	// }
 
 
 	function ResetScore () {
@@ -202,11 +223,13 @@ function Player(gamePiece, game) {
 	}
 
 	function InitializeListeners () {
+		const game = Engine.GetCurrentGame().game
 		if (!game.cells[0][0].getAttribute("listener")) {
 			game.cells.forEach( (row, rIndex) => {
 				row.forEach( (column, cIndex) => {
 					column.addEventListener ( "click", () => {
-						this.UserMove(rIndex, cIndex)
+
+						this.Move(rIndex, cIndex)
 					})
 				})
 			})
@@ -214,8 +237,8 @@ function Player(gamePiece, game) {
 	}
 
 	return {
-		gamePiece, game, score, 
-		UserMove, OpponentMove, ResetScore, InitializeListeners
+		gamePiece, score, 
+		Move, ResetScore, InitializeListeners
 	}
 }
 
