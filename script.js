@@ -173,11 +173,9 @@ function Player(gamePiece, game) {
 		}
 	}
 
-	// RNG is not good enough here because it keeps guessing the same coordinates
-	// need to exclude occupied cells from the pool of possibilities
 	function OpponentMove () {
-		let rndX = Math.floor(Math.random() * 2)
-		let rndY = Math.floor(Math.random() * 2)
+		let rndX = Math.floor(Math.random() * 3)
+		let rndY = Math.floor(Math.random() * 3)
 
 		console.log(`Computer move: (${rndX}, ${rndY})`)
 
