@@ -1,7 +1,7 @@
 
 const Engine = (function () {
 	let gameArchive = []
-	let userTurn = false
+	let userTurn
 	let winState = false
 	const gameboardElement = document.getElementById("gameboard")
 	const gameDialogueElement = document.getElementById("game-dialogue")
@@ -36,10 +36,10 @@ const Engine = (function () {
 		game.InitializeBoard()
 		player.InitializeListeners()
 		gameArchive.push(newGame)
-		userTurn = playerSigil == "x" ? true : false
+		Engine.userTurn = newGame.player.gamePiece == "x" ? true : false
 		dialogues["new-game"].classList.add("invisible")
 		gameDialogueElement.style.zIndex = -1
-		TurnHandler(newGame.game, userTurn)
+		TurnHandler(userTurn)
 
 		return newGame
 	}
@@ -82,15 +82,20 @@ const Engine = (function () {
 		else { /* turn */ }
 	}
 
-	function TurnHandler (game, turn) {
+	function TurnHandler () {
+		console.log("userTurn value upon entry: " + Engine.userTurn)
 		if (!winState) {
-			if (turn) {
+			if (Engine.userTurn) {
+				console.log("Switched to user turn")
 				Engine.gameboardElement.classList.remove("no-click")
+				console.log("Player turn")
 			} else {
+				console.log("Switched to computer turn")
 				Engine.gameboardElement.classList.add("no-click")
-				setInterval(game.opponent.OpponentMove(), 1000)
+				console.log("Computer turn")
+				setTimeout(Engine.GetCurrentGame().opponent.OpponentMove(), 1000)
 			}
-			turn = !turn
+			Engine.userTurn = Engine.userTurn
 		}
 	}
 
@@ -106,6 +111,9 @@ const Engine = (function () {
 		switch (errorType) {
 			case "move":
 				console.log("Invalid move")
+				if (!Engine.userTurn) {
+					Engine.GetCurrentGame().opponent.OpponentMove()
+				}
 		}
 	}
 
@@ -153,23 +161,36 @@ function Player(gamePiece, game) {
 
 	function UserMove (x, y) {
 		if (game.placements[x][y] == " "){
+			console.log("User move:")
 			game.placements[x][y] = gamePiece
 			game.LogBoard()
 			game.DrawBoard()
 			Engine.Evaluate(this)
-			Engine.TurnHandler(game, Engine.userTurn)
+			Engine.userTurn = !Engine.userTurn
+			Engine.TurnHandler()
 		} else {
 			Engine.Error("move")
 		}
 	}
 
+	// RNG is not good enough here because it keeps guessing the same coordinates
+	// need to exclude occupied cells from the pool of possibilities
 	function OpponentMove () {
-		let rndX = Math.Floor(Math.Random() * 2)
-		let rndY = Math.Floor(Math.Random() * 2)
+		let rndX = Math.floor(Math.random() * 2)
+		let rndY = Math.floor(Math.random() * 2)
 
-		game.opponent.Move(rndX, rndY)
+		console.log(`Computer move: (${rndX}, ${rndY})`)
 
-		Engine.TurnHandler(game, Engine.userTurn)
+		if (game.placements[rndX][rndY] == " "){
+			game.placements[rndX][rndY] = gamePiece
+			game.LogBoard()
+			game.DrawBoard()
+			Engine.Evaluate(this)
+			Engine.userTurn = !Engine.userTurn
+			Engine.TurnHandler()	
+		} else {
+			Engine.Error("move")
+		}
 	}
 
 
