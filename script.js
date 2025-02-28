@@ -28,6 +28,7 @@ const Engine = (function () {
 	}
 
 	function CreateGame (playerSigil, oppSigil) {
+		winState = false
 		const game = new Game()
 		const player = new Player(playerSigil, game)
 		const opponent = new Player(oppSigil, game)
@@ -40,6 +41,8 @@ const Engine = (function () {
 		dialogues["new-game"].classList.add("invisible")
 		gameDialogueElement.style.zIndex = -1
 		TurnHandler(userTurn)
+
+		console.log(" ****** New game initiated! ******")
 
 		return newGame
 	}
@@ -94,12 +97,14 @@ const Engine = (function () {
 				Engine.gameboardElement.classList.add("no-click")
 				console.log("Computer turn")
 				setTimeout(Engine.GetCurrentGame().opponent.OpponentMove(), 1000)
-			}
+			} 
 			Engine.userTurn = Engine.userTurn
 		}
+		else { return }
 	}
 
 	function WinGame (player) {
+		DialogueHandler("result")
 		console.log(player.gamePiece + " wins the game!")
 	}
 
@@ -124,7 +129,7 @@ const Engine = (function () {
 })()
 
 function Game () {
-	const placements = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
+	const placements = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
 
 	let boardElement = Engine.gameboardElement.children
 	let cells = structuredClone(placements)
@@ -160,7 +165,7 @@ function Player(gamePiece, game) {
 	let score = new Array(8).fill(0)
 
 	function UserMove (x, y) {
-		if (game.placements[x][y] == " "){
+		if (game.placements[x][y] == "-"){
 			console.log("User move:")
 			game.placements[x][y] = gamePiece
 			game.LogBoard()
@@ -179,7 +184,7 @@ function Player(gamePiece, game) {
 
 		console.log(`Computer move: (${rndX}, ${rndY})`)
 
-		if (game.placements[rndX][rndY] == " "){
+		if (game.placements[rndX][rndY] == "-"){
 			game.placements[rndX][rndY] = gamePiece
 			game.LogBoard()
 			game.DrawBoard()
