@@ -1,15 +1,25 @@
+/* 
+ * Need Tie game Condition
+ *
+ * Need to exclude occupied squares 
+ * from opponent's random movement 
+ * calculation for rare loop condition
+ *
+ */
 
 const Engine = (function () {
 	let gameArchive = []
 	let userTurn
 	let winState = false
 	const gameboardElement = document.getElementById("gameboard")
+	// let cells
 	const gameDialogueElement = document.getElementById("game-dialogue")
 	const dialogues = {
 		"new-game": document.getElementById("new-game-dialogue"),
 		"info": document.getElementById("info-dialogue"),
 		"result": document.getElementById("result-dialogue")
 	}
+	let noListeners = true
 
 	function DialogueHandler (dialogue) {
 		for (e in dialogues) {
@@ -27,19 +37,47 @@ const Engine = (function () {
 		}
 	}
 
+	function InitializeListeners () {
+		if (noListeners) {
+			Engine.cells.forEach( (row, rIndex) => {
+				row.forEach( (column, cIndex) => {
+					column.addEventListener ( "click", () => {
+						Engine.GetCurrentGame().player.Move(rIndex, cIndex)
+						noListeners = false
+					})
+				})
+			})
+		}
+	}
+
+	function InitializeBoard () {
+		let cellElements = [[" ", " ", " "],  [" ",  " ", " "], [" ", " ", " "]]
+		for (let i = 0; i < Engine.gameboardElement.children.length; i++) {
+			for (let j = 0; j < Engine.gameboardElement.children[i].children.length; j++) {
+				cellElements[i][j] = Engine.gameboardElement.children[i].children[j]
+				cellElements[i][j].textContent = "-"
+			}
+		}
+		
+		Engine.cells = cellElements
+	}
+
 	function CreateGame (playerSigil, oppSigil) {
 		winState = false
-		const game = new Game()
+		const gameBoard = new GameBoard()
 		const player = new Player(playerSigil)
+		Engine.userTurn = player.gamePiece == "x" ? true : false
 		const opponent = new Player(oppSigil)
-		const newGame = {game, player, opponent}
+		const newGame = { gameBoard, player, opponent }
 
-		game.InitializeBoard()
 		gameArchive.push(newGame)
-		player.InitializeListeners()
-		Engine.userTurn = newGame.player.gamePiece == "x" ? true : false
+		Engine.InitializeBoard()
+		Engine.InitializeListeners()
+
+		
 		dialogues["new-game"].classList.add("invisible")
 		gameDialogueElement.style.zIndex = -1
+
 		TurnHandler(userTurn)
 
 		console.log(" ****** New game initiated! ******")
@@ -47,13 +85,9 @@ const Engine = (function () {
 		return newGame
 	}
 
-	function GameStart (playerSigil, oppSigil) {
-		CreateGame(playerSigil, oppSigil)
-	}
-
 	function Evaluate (player) {
 		player.ResetScore()
-		let gamePlacements = Engine.GetCurrentGame().game.placements
+		let gamePlacements = Engine.GetCurrentGame().gameBoard.placements
 
 		for (let row = 0; row < gamePlacements.length; row ++) { // rows
 			for (let col = 0; col < gamePlacements[row].length; col++) {
@@ -76,7 +110,7 @@ const Engine = (function () {
 				} else { continue }
 			}
 		}
-
+	
 		if (player.score.filter( (e) => e == 3 ).length != 0) {
 			console.log(player.score)
 			winState = true
@@ -96,7 +130,7 @@ const Engine = (function () {
 				console.log("Switched to computer turn")
 				Engine.gameboardElement.classList.add("no-click")
 				console.log("Computer turn")
-				Engine.GetCurrentGame().opponent.Move()
+				setTimeout(Engine.GetCurrentGame().opponent.Move, 1000)
 			} 
 			Engine.userTurn = Engine.userTurn
 		}
@@ -118,35 +152,27 @@ const Engine = (function () {
 				console.log("Invalid move")
 				if (!Engine.userTurn) {
 					Engine.GetCurrentGame().opponent.Move(0,0)
+				} else {
+					!Engine.userTurn
 				}
 		}
 	}
 
 	return {
 		gameArchive, gameboardElement, userTurn, winState,
-		Evaluate, DialogueHandler, CreateGame, TurnHandler, GameStart,
+		Evaluate, DialogueHandler, CreateGame, TurnHandler,
+		InitializeBoard, InitializeListeners,
 		Error, GetCurrentGame }
 })()
 
-function Game () {
+function GameBoard () {
 	const placements = [["-", "-", "-"], ["-", "-", "-"], ["-", "-", "-"]]
 
-	let boardElement = Engine.gameboardElement.children
-	let cells = structuredClone(placements)
-
-	function InitializeBoard () {
-		for (let i = 0; i < boardElement.length; i++) {
-			for (let j = 0; j < boardElement[i].children.length; j++) {
-				cells[i][j] = boardElement[i].children[j]
-				cells[i][j].textContent = "-"
-			}
-		}		
-	}
 
 	function DrawBoard () {
-		for (let i = 0; i < boardElement.length; i++) {
-			for (let j = 0; j < boardElement[i].children.length; j++) {
-				boardElement[i].children[j].textContent = placements[i][j]
+		for (let i = 0; i < Engine.gameboardElement.children.length; i++) {
+			for (let j = 0; j < Engine.gameboardElement.children[i].children.length; j++) {
+				Engine.cells[i][j].textContent = this.placements[i][j]
 			}
 		}
 	}
@@ -158,7 +184,7 @@ function Game () {
 		console.log(" ")
 	}
 
-	return { placements, cells, InitializeBoard, DrawBoard, LogBoard }
+	return { placements, DrawBoard, LogBoard }
 }
 
 function Player(gamePiece) {
@@ -166,12 +192,12 @@ function Player(gamePiece) {
 	let score = new Array(8).fill(0)
 
 	function Move () {
-		const game = Engine.GetCurrentGame().game
+		const gameBoardTarget = Engine.GetCurrentGame().gameBoard
 		console.log (`userTurn on Move() call: ${Engine.userTurn}`)
 		if (Engine.userTurn){
 			console.log(`User move: ${arguments[0]}, ${arguments[1]}`)
-			if (game.placements[arguments[0]][arguments[1]] == "-") {
-				game.placements[arguments[0]][arguments[1]] = gamePiece
+			if (gameBoardTarget.placements[arguments[0]][arguments[1]] == "-") {
+				gameBoardTarget.placements[arguments[0]][arguments[1]] = gamePiece
 			} else {
 				Engine.Error("move")
 				return
@@ -182,8 +208,8 @@ function Player(gamePiece) {
 
 				console.log(`Computer move: (${rndX}, ${rndY})`)
 
-				if (game.placements[rndX][rndY] == "-") {
-					game.placements[rndX][rndY] = gamePiece
+				if (gameBoardTarget.placements[rndX][rndY] == "-") {
+					gameBoardTarget.placements[rndX][rndY] = gamePiece
 				} else {
 					Engine.Error("move")
 					return
@@ -193,60 +219,20 @@ function Player(gamePiece) {
 		let context = Engine.userTurn ? Engine.GetCurrentGame().player 
 			: Engine.GetCurrentGame().opponent
 
-		game.LogBoard()
-		game.DrawBoard()
+		gameBoardTarget.LogBoard()
+		gameBoardTarget.DrawBoard()
 		Engine.Evaluate(context)
 		Engine.userTurn = !Engine.userTurn
 		Engine.TurnHandler()
 	}
-	
-	//
-	// function OpponentMove () {
-	//
-	//
-	// 	console.log(`Computer move: (${rndX}, ${rndY})`)
-	//
-	// 	if (game.placements[rndX][rndY] == "-"){
-	// 		game.LogBoard()
-	// 		game.DrawBoard()
-	// 		Engine.Evaluate(this)
-	// 		Engine.userTurn = !Engine.userTurn
-	// 		Engine.TurnHandler()	
-	// 	} else {
-	// 		Engine.Error("move")
-	// 	}
-	// }
-
 
 	function ResetScore () {
 		this.score.fill(0)
 	}
 
-	function InitializeListeners () {
-		const game = Engine.GetCurrentGame().game
-		if (!game.cells[0][0].getAttribute("listener")) {
-			game.cells.forEach( (row, rIndex) => {
-				row.forEach( (column, cIndex) => {
-					column.addEventListener ( "click", () => {
-
-						this.Move(rIndex, cIndex)
-					})
-				})
-			})
-		}
-	}
-
 	return {
 		gamePiece, score, 
-		Move, ResetScore, InitializeListeners
+		Move, ResetScore 
 	}
 }
-
-// let newGame = Engine.CreateGame("x", "o")
-// newGame.player.Move(0, 0)
-// newGame.player.Move(1, 0)
-// newGame.player.Move(2, 1)
-//
-// newGame.opponent.Move(1, 0)
-// newGame.opponent.Move(1, 1)
 
