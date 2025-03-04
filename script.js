@@ -50,7 +50,9 @@ const Engine = (function () {
 				cellElements[i][j].textContent = "-"
 				cellElements[i][j].classList.remove("cell-user", "cell-computer", "no-click", 
 					"cell-user-placement", "cell-computer-placement",
-					"cell-user-win", "cell-computer-win")
+					"cell-user-win", "cell-computer-win", "cell-computer-think-1",
+					"cell-computer-think-2", "cell-computer-think-3")
+				cellElements[i][j].classList.add("cell-active-game")
 			}
 		}
 		
@@ -58,7 +60,7 @@ const Engine = (function () {
 	}
 
 	function CreateGame (playerSigil, oppSigil) {
-		winState = false
+		Engine.winState = false
 		const gameBoard = new GameBoard()
 		const player = new Player(playerSigil)
 		Engine.userTurn = player.gamePiece == "x" ? true : false
@@ -108,7 +110,7 @@ const Engine = (function () {
 	
 		if (player.score.filter( (e) => e == 3 ).length != 0) {
 			console.log(player.score)
-			winState = true
+			Engine.winState = true
 			let winnerStyle = Engine.userTurn ? "cell-user-win" : "cell-computer-win"
 			player.placements.forEach((e) => e.classList.add(winnerStyle))
 			setTimeout(EndGame, 1000, player)
@@ -128,7 +130,7 @@ const Engine = (function () {
 
 	function TurnHandler () {
 		console.log("userTurn TurnHandler() call: " + Engine.userTurn)
-		if (!winState) {
+		if (!Engine.winState) {
 			if (Engine.userTurn) {
 				console.log("Switched to user turn")
 				Engine.gameboardElement.classList.remove("no-click")
@@ -136,6 +138,22 @@ const Engine = (function () {
 			} else {
 				console.log("Switched to computer turn")
 				Engine.gameboardElement.classList.add("no-click")
+				let pulses = [
+					"cell-computer-think-1",
+					"cell-computer-think-2",
+					"cell-computer-think-3"
+				]
+				for (let i = 0; i < Engine.cells.length; i++) {
+					for (let j = 0; j < Engine.cells[i].length; j++) {
+						if (Engine.cells[i][j].textContent != "-") { continue }
+						Engine.cells[i][j].classList.remove("cell-computer-think-1",
+							"cell-computer-think-2", "cell-computer-think-3")
+						Engine.cells[i][j].offsetWidth // trigger reflow
+						let pulseRandomizer = Math.floor(Math.random() * 3)
+						console.log(`Apply ${pulses[pulseRandomizer]} to cell ${i}, ${j}`)
+						Engine.cells[i][j].classList.add(pulses[pulseRandomizer])
+					}
+				}
 				console.log("Computer turn")
 				setTimeout(Engine.GetCurrentGame().opponent.Move, 1000)
 			} 
@@ -152,8 +170,8 @@ const Engine = (function () {
 			winnerElement.textContent = player.gamePiece 
 		}
 		DialogueHandler("result")
+		Engine.gameboardElement.classList.add("no-click")
 		console.log(player.gamePiece + " wins the game!")
-		Engine.tieGame = 0
 	}
 
 	function GetCurrentGame () {
@@ -173,7 +191,8 @@ const Engine = (function () {
 	}
 
 	return {
-		gameArchive, gameboardElement, userTurn, winState, tieGame,
+		gameArchive, gameboardElement, gameDialogueElement,
+		userTurn, winState, tieGame,
 		Evaluate, DialogueHandler, CreateGame, TurnHandler,
 		InitializeBoard, InitializeListeners,
 		Error, GetCurrentGame }

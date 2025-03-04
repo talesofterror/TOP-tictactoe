@@ -156,6 +156,11 @@ main {
 	color: var(--accent-color-primary);
 }
 
+.cell-active-game:hover {
+	color: var(--accent-color-primary);
+	background-color: var(--grid-background-color);
+}
+
 .cell-computer {
 	color: var(--accent-color-secondary);
 }
@@ -195,6 +200,24 @@ main {
 	100% {
 		color: var(--accent-color-secondary);
 	}
+}
+
+.cell-computer-think-1 {
+	animation: 0.9s 2 normal computerThink;
+}
+
+.cell-computer-think-2 {
+	animation: 0.5s 3 normal computerThink;
+}
+
+.cell-computer-think-3 {
+	animation: 0.25s 4 normal computerThink;
+}
+
+@keyframes computerThink {
+	0% {color: var(--grid-main-foreground-color);}
+	50% {color: var(--accent-color-secondary);}
+	100% {color: var(--grid-main-foreground-color);}
 }
 
 .cell-user-win {
