@@ -51,8 +51,9 @@ const Engine = (function () {
 				cellElements[i][j].classList.remove("cell-user", "cell-computer", "no-click", 
 					"cell-user-placement", "cell-computer-placement",
 					"cell-user-win", "cell-computer-win", "cell-computer-think-1",
-					"cell-computer-think-2", "cell-computer-think-3")
-				cellElements[i][j].classList.add("cell-active-game")
+					"cell-computer-think-2", "cell-computer-think-3", "cell-start-game")
+				cellElements[i][j].offsetWidth
+				cellElements[i][j].classList.add("cell-active-game", "cell-start-game")
 			}
 		}
 		
@@ -147,7 +148,7 @@ const Engine = (function () {
 					for (let j = 0; j < Engine.cells[i].length; j++) {
 						if (Engine.cells[i][j].textContent != "-") { continue }
 						Engine.cells[i][j].classList.remove("cell-computer-think-1",
-							"cell-computer-think-2", "cell-computer-think-3")
+							"cell-computer-think-2", "cell-computer-think-3", "cell-start-game")
 						Engine.cells[i][j].offsetWidth // trigger reflow
 						let pulseRandomizer = Math.floor(Math.random() * 3)
 						console.log(`Apply ${pulses[pulseRandomizer]} to cell ${i}, ${j}`)

@@ -1,16 +1,3 @@
-/* 
- *
- * Media Query for devices smaller than 500 css pixels? 
- * 	move title to top, straighten
- * 	interface options below title next to each other centered or to the right, and bigger
- *
- * Current layout: interface options don't center on mobile for some reason
- *
- * 2/19/2025: Discovered that everything is broken in Firefox
- * 	letter-spacing for the title displays correctly in chrome with -0.5em
- * 	and correctly in FF without specifying
- *
- * */
 
 * {
 	box-sizing: border-box;
@@ -144,7 +131,6 @@ main {
 	width: 100%;
 	margin: auto;
 	cursor: pointer;
-	/* animation-fill-mode: forward; */
 }
 
 .cell:hover {
@@ -172,6 +158,22 @@ main {
 
 .no-click {
 	pointer-events: none;
+}
+
+.cell-start-game {
+	animation: 0.25s 1 alternate startGame;
+}
+
+@keyframes startGame {
+	0% {
+		color: var(--grid-main-foreground-color);
+	}
+	50% {
+		color: var(--title-color);
+	}
+	100% {
+		color: var(--grid-main-foreground-color);
+	}
 }
 
 .cell-user-placement {
@@ -328,7 +330,27 @@ main {
 	cursor: pointer;
 }
 
-/**/
+
+#info-dialogue p {
+	padding: 0.5em;
+}
+
+#info-dialogue a {
+	color: var(--accent-color-primary);
+}
+
+#info-dialogue a:hover {
+	color: var(--title-color);
+}
+
+#info-dialogue p:first-child {
+	font-family: HR-Bg;
+	font-size: 2em;
+	line-height: 0em;
+	color: var(--title-color);
+}
+
+/* FONTS */
 
 @font-face {
 	font-family: "HR-Reg";
@@ -351,6 +373,8 @@ main {
 		margin-top: 0.3em;
 	}
 }
+
+/* MEDIA RULES */ 
 
 @media only screen and (max-width: 500px) {
 
